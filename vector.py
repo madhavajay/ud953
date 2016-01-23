@@ -51,7 +51,7 @@ class Vector(object):
 
     def _operate(self, operator, val):
         """Performs operation on Vector against scalar or Vector values"""
-        if isinstance(val, numbers.Integral):
+        if isinstance(val, (numbers.Integral, numbers.Real)):
             return self._scalar_operate(operator, val)
         elif isinstance(val, Vector):
             return self._vector_operate(operator, val)
@@ -85,3 +85,28 @@ class Vector(object):
             raise ZeroDivisionError('A zero vector cannot be normalized')
         else:
             return Vector([(x / magnitude) for x in self.coords])
+
+    def sum_coordinates(self):
+        """Sums the coordinates"""
+        return sum(self.coords)
+
+    def dot_product(self, vector):
+        """
+        Calculate the dot_product with another Vector
+        Where dot_product == The sum of coordinates in Vector1 * Vector2
+        """
+        return (self * vector).sum_coordinates()
+
+    def angle_radians(self, vector):
+        """
+        Calculate the angle between two Vectors in Radians
+        Where Theta == arccos(v1 dot v2 / |v1| dot |v2|)
+        """
+        vector_dot_prod = self.dot_product(vector)
+        magnitude_dot_prod = self.magnitude() * vector.magnitude()
+
+        return math.acos(vector_dot_prod / magnitude_dot_prod)
+
+    def angle_degrees(self, vector):
+        """Calculate the angle between two Vectors in Degrees"""
+        return math.degrees(self.angle_radians(vector))

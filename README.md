@@ -16,4 +16,4 @@ py.test
 ```
 
 ## Quiz Answers
-The quiz answers are part of the udacity_quizzes.py pytest file
+The quiz answers are in the tests/udacity_test.py pytest file
