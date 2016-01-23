@@ -4,6 +4,10 @@
 
 import math
 import numbers
+from decimal import Decimal, getcontext
+
+# set the decimal precision
+getcontext().prec = 30
 
 
 class Vector(object):
@@ -13,7 +17,7 @@ class Vector(object):
         try:
             if not coords:
                 raise ValueError
-            self.coords = tuple(coords)
+            self.coords = tuple([Decimal(x) for x in coords])
             self.dimension = len(coords)
 
         except ValueError:
@@ -52,7 +56,7 @@ class Vector(object):
     def _operate(self, operator, val):
         """Performs operation on Vector against scalar or Vector values"""
         if isinstance(val, (numbers.Integral, numbers.Real)):
-            return self._scalar_operate(operator, val)
+            return self._scalar_operate(operator, Decimal(val))
         elif isinstance(val, Vector):
             return self._vector_operate(operator, val)
         else:
@@ -76,7 +80,7 @@ class Vector(object):
         a_sqrd = b_sqrd + c_sqrd
         """
         magnitude_sqrd = sum([i ** 2 for i in self.coords])
-        return math.sqrt(magnitude_sqrd)
+        return Decimal(math.sqrt(magnitude_sqrd))
 
     def normalize(self):
         """Finds the normalized Vector where the magnitude == 1"""
@@ -103,10 +107,31 @@ class Vector(object):
         Where Theta == arccos(v1 dot v2 / |v1| dot |v2|)
         """
         vector_dot_prod = self.dot_product(vector)
-        magnitude_dot_prod = self.magnitude() * vector.magnitude()
+        if self.magnitude() == 0 or vector.magnitude() == 0:
+            raise ZeroDivisionError('A zero vector has no angle')
 
-        return math.acos(vector_dot_prod / magnitude_dot_prod)
+        magnitude_dot_prod = self.magnitude() * vector.magnitude()
+        cos_angle = min(1, max(vector_dot_prod / magnitude_dot_prod, -1))
+        return math.acos(cos_angle)
 
     def angle_degrees(self, vector):
         """Calculate the angle between two Vectors in Degrees"""
         return math.degrees(self.angle_radians(vector))
+
+    def is_parallel(self, vector):
+        """
+        Determine if two Vectors are parallel
+        Where their absolute normalized Vectors are the same
+        A vector in the opposite direction is still valid
+        """
+        if self.magnitude() == 0 or vector.magnitude() == 0:
+            return True
+        v_norm = self.normalize().round_coords(15)
+        w_norm = vector.normalize().round_coords(15)
+        return (v_norm == w_norm) or (v_norm == (w_norm * -1))
+
+    def is_orthogonal(self, vector):
+        """Determine if two Vectors are orthogonal (right angles)"""
+        if self.magnitude() == 0 or vector.magnitude() == 0:
+            return True
+        return self.angle_degrees(vector) == Decimal('90')

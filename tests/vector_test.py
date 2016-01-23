@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 # Author: github.com/madhavajay
 """This is a test for the Vector Class"""
+from decimal import Decimal, getcontext
 import pytest
 from vector import Vector
+
+# set the decimal precision
+getcontext().prec = 30
 
 
 # Fixtures
@@ -10,7 +14,8 @@ VECTOR_1 = Vector([1, 2, 3])
 VECTOR_2 = Vector([5, -3, 6])
 VECTOR_3 = Vector([3, 4])
 VECTOR_4 = Vector([5.5819, -2.1369])
-VECTOR_5 = Vector([5.5819, -2.1369])
+VECTOR_5 = Vector([2, 2])
+VECTOR_6 = Vector([-2, -2])
 ZERO_VECTOR = Vector([0, 0])
 
 
@@ -64,14 +69,16 @@ def test_vector_magnitude():
 
 def test_vector_normalize():
     """Test normalizing a Vector"""
-    answer = Vector([0.6, 0.8])
-    assert answer.magnitude() == 1.0
+    answer = Vector([0.6, 0.8]).round_coords(1)
+    assert answer.magnitude() == Decimal('1.0')
     assert VECTOR_3.normalize() == answer
 
 
 def test_round_coords():
     """Test rounding the coordinate scalars in a Vector"""
-    answer = Vector([5.582, -2.137])
+    answer = Vector([5.582, -2.137]).round_coords(3)
+    print(answer)
+    print(VECTOR_4.round_coords(3))
     assert VECTOR_4.round_coords(3) == answer
 
 
@@ -104,3 +111,12 @@ def test_angle_degrees():
     """Test calculating the angle in degrees between two Vectors"""
     answer = 57.109
     assert round(VECTOR_1.angle_degrees(VECTOR_2), 3) == answer
+
+
+def test_is_parallel():
+    """Test if two Vectors are parallel"""
+    answer1 = False
+    assert VECTOR_1.is_parallel(VECTOR_2) == answer1
+
+    answer2 = True
+    assert VECTOR_5.is_parallel(VECTOR_6) == answer2
