@@ -74,11 +74,18 @@ def test_vector_normalize():
     assert VECTOR_3.normalize() == answer
 
 
+def test_invert_vector():
+    """Test inverting a Vector"""
+    vector1 = Vector([5, 5])
+    answer = Vector([-5, -5])
+
+    invert_vector = vector1.invert_vector()
+    assert invert_vector == answer
+
+
 def test_round_coords():
     """Test rounding the coordinate scalars in a Vector"""
     answer = Vector([5.582, -2.137]).round_coords(3)
-    print(answer)
-    print(VECTOR_4.round_coords(3))
     assert VECTOR_4.round_coords(3) == answer
 
 
@@ -120,3 +127,36 @@ def test_is_parallel():
 
     answer2 = True
     assert VECTOR_5.is_parallel(VECTOR_6) == answer2
+
+
+def test_projection():
+    """Test the resultant Vector from projecting one vector onto another"""
+    vector1 = Vector([2, 1])
+    vector2 = Vector([0.825, 2.036])
+    answer = Vector([0.630, 1.555]).round_coords(3)
+
+    projected_vector = vector1.project_to(vector2).round_coords(3)
+    assert projected_vector == answer
+
+
+def test_orthogonal_component():
+    """Test the orthogonal component Vector of the Vector Projection"""
+    vector1 = Vector([2, 1])
+    vector2 = Vector([0.825, 2.036])
+    answer = Vector([1.370, -0.555]).round_coords(3)
+
+    orthogonal_vector = vector1.orthogonal_component(vector2).round_coords(3)
+    assert orthogonal_vector == answer
+
+
+def test_component_vectors():
+    """Test the component Vectors of a Vector given the Baseline Vector"""
+    vector1 = Vector([2, 1]).round_coords(3)
+    vector2 = Vector([0.825, 2.036])
+    answer = Vector([2, 1]).round_coords(3)
+
+    projected_vector = vector1.project_to(vector2)
+    orthogonal_vector = vector1.orthogonal_component(vector2)
+    sum_components = projected_vector + orthogonal_vector
+
+    assert sum_components == answer

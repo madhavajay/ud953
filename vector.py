@@ -55,7 +55,7 @@ class Vector(object):
 
     def _operate(self, operator, val):
         """Performs operation on Vector against scalar or Vector values"""
-        if isinstance(val, (numbers.Integral, numbers.Real)):
+        if isinstance(val, (numbers.Integral, numbers.Real, Decimal)):
             return self._scalar_operate(operator, Decimal(val))
         elif isinstance(val, Vector):
             return self._vector_operate(operator, val)
@@ -69,6 +69,10 @@ class Vector(object):
         """Performs operation on Vector against scalar or Vector values"""
         return Vector([self._eval_(x, operator, y) for x, y in zip(
             self.coords, vector.coords)])
+
+    def invert_vector(self):
+        """Inverts a Vector by multiplying it by -1"""
+        return self * -1
 
     def round_coords(self, decimal_places):
         """Rounds the Coordinates inside the Vector to decimal_places"""
@@ -96,10 +100,10 @@ class Vector(object):
 
     def dot_product(self, vector):
         """
-        Calculate the dot_product with another Vector
+        Calculate the scalar dot_product with another Vector
         Where dot_product == The sum of coordinates in Vector1 * Vector2
         """
-        return (self * vector).sum_coordinates()
+        return Decimal((self * vector).sum_coordinates())
 
     def angle_radians(self, vector):
         """
@@ -135,3 +139,19 @@ class Vector(object):
         if self.magnitude() == 0 or vector.magnitude() == 0:
             return True
         return self.angle_degrees(vector) == Decimal('90')
+
+    def project_to(self, vector):
+        """
+        Project one Vector onto another
+        Where the resultant projected_vector = (v1 dot v2_norm) * v2norm
+        """
+        v_norm = vector.normalize()
+        return v_norm * self.dot_product(v_norm)
+
+    def orthogonal_component(self, vector):
+        """
+        Determine the orthogonal component Vector given the baseline vector
+        Which sums with the Projected Vector to equal the original vector
+        Where the resultant orthogonal = v1 - projected_vector
+        """
+        return self - self.project_to(vector)

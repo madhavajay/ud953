@@ -92,3 +92,34 @@ def test_parallel_or_orthogonal():
     vector8 = Vector([0, 0])
     assert vector7.is_parallel(vector8) is True
     assert vector7.is_orthogonal(vector8) is True
+
+
+def test_vector_projections():
+    """Quiz 5 projecting vectors"""
+    vector1 = Vector([3.039, 1.879])
+    vector2 = Vector([0.825, 2.036])
+    answer1 = Vector([1.083, 2.672]).round_coords(3)
+
+    projected_vector1 = vector1.project_to(vector2).round_coords(3)
+
+    assert projected_vector1 == answer1
+
+    vector3 = Vector([-9.88, -3.264, -8.159])
+    vector4 = Vector([-2.155, -9.353, -9.473])
+    answer2 = Vector([-8.350, 3.376, -1.434]).round_coords(3)
+
+    orthogonal_vector1 = vector3.orthogonal_component(vector4).round_coords(3)
+    assert orthogonal_vector1 == answer2
+
+    vector5 = Vector([3.009, -6.172, 3.692, -2.51]).round_coords(3)
+    vector6 = Vector([6.404, -9.144, 2.759, 8.718])
+    answer3 = Vector([1.969, -2.811, 0.848, 2.680]).round_coords(3)
+    answer4 = Vector([1.040, -3.361, 2.844, -5.190]).round_coords(3)
+
+    projected_vector2 = vector5.project_to(vector6).round_coords(3)
+    orthogonal_vector2 = vector5.orthogonal_component(vector6).round_coords(3)
+    sum_vector = projected_vector2 + orthogonal_vector2
+
+    assert projected_vector2 == answer3
+    assert orthogonal_vector2 == answer4
+    assert sum_vector == vector5
