@@ -160,3 +160,44 @@ def test_component_vectors():
     sum_components = projected_vector + orthogonal_vector
 
     assert sum_components == answer
+
+
+def test_cross_product_error():
+    """Test TypeError when trying to use non 3d Vectors with cross_product"""
+    with pytest.raises(TypeError) as excinfo:
+        VECTOR_1.threed_cross_product(VECTOR_3)
+    assert str(excinfo.value) == 'Both vectors must be 3 dimensional'
+
+
+def test_cross_product():
+    """Test 3d dimensional cross product of two Vectors"""
+    vector1 = Vector([5, 3, -2])
+    vector2 = Vector([-1, 0, 3])
+    answer = Vector([9, -13, 3])
+
+    cross_product = vector1.threed_cross_product(vector2)
+    assert cross_product == answer
+    assert cross_product.is_orthogonal(vector1) is True
+    assert cross_product.is_orthogonal(vector2) is True
+
+
+def test_parallelogram_area():
+    """Test calculate the area of parallelogram of two 3d Vectors"""
+    vector1 = Vector([5, 3, -2])
+    vector2 = Vector([-1, 0, 3])
+    answer = Decimal('16.093')
+
+    area = round(vector1.threed_parallelogram_area(vector2), 3)
+    assert area == answer
+
+
+def test_triangle_area():
+    """Test calculate the area of triangle of two 3d Vectors"""
+    vector1 = Vector([5, 3, -2])
+    vector2 = Vector([-1, 0, 3])
+    answer = Decimal('8.047')
+
+    area = round(vector1.threed_triangle_area(vector2), 3)
+    assert area == answer
+
+

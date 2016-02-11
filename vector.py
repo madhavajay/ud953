@@ -155,3 +155,50 @@ class Vector(object):
         Where the resultant orthogonal = v1 - projected_vector
         """
         return self - self.project_to(vector)
+
+    def threed_cross_product(self, vector):
+        """
+        Determine a cross product which is orthogonal to both v1 and v2.
+        Where the values are multiplied in a special order
+        Only works for 3 dimensional vectors
+        """
+
+        if len(self.coords) != 3 or len(vector.coords) != 3:
+            raise TypeError('Both vectors must be 3 dimensional')
+
+        # y1 x z2 - y2 x z1
+        cross_x = (
+            (self.coords[1] * vector.coords[2]) -
+            (vector.coords[1] * self.coords[2])
+        )
+
+        # - (x1 x z2 - x2 x z1)
+        cross_y = - (
+            (self.coords[0] * vector.coords[2]) -
+            (vector.coords[0] * self.coords[2])
+        )
+
+        # x1 * y2 - x2 * y1
+        cross_z = (
+            (self.coords[0] * vector.coords[1]) -
+            (vector.coords[0] * self.coords[1])
+        )
+
+        return Vector([cross_x, cross_y, cross_z])
+
+    def threed_parallelogram_area(self, vector):
+        """Calculates area of parallelogram spanned by 3d Vectors v1 and v2"""
+        if len(self.coords) != 3 or len(vector.coords) != 3:
+            raise TypeError('Both vectors must be 3 dimensional')
+
+        return self.threed_cross_product(vector).magnitude()
+
+    def threed_triangle_area(self, vector):
+        """
+        Calculates area of triangle half of a parallelogram that spans
+        3d Vectors v1 and v2
+        """
+        if len(self.coords) != 3 or len(vector.coords) != 3:
+            raise TypeError('Both vectors must be 3 dimensional')
+
+        return self.threed_parallelogram_area(vector) / 2

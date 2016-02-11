@@ -123,3 +123,27 @@ def test_vector_projections():
     assert projected_vector2 == answer3
     assert orthogonal_vector2 == answer4
     assert sum_vector == vector5
+
+
+def test_cross_products():
+    """Quiz 6 cross products"""
+    vector1 = Vector([8.462, 7.893, -8.187])
+    vector2 = Vector([6.984, -5.975, 4.778])
+    answer1 = Vector([-11.205, -97.609, -105.685]).round_coords(3)
+
+    cross_product = vector1.threed_cross_product(vector2).round_coords(3)
+    assert cross_product == answer1
+
+    vector3 = Vector([-8.987, -9.838, 5.031])
+    vector4 = Vector([-4.268, -1.861, -8.866])
+    answer2 = Decimal('142.122')
+
+    parallelogram_area = round(vector3.threed_parallelogram_area(vector4), 3)
+    assert parallelogram_area == answer2
+
+    vector5 = Vector([1.5, 9.547, 3.691])
+    vector6 = Vector([-6.007, 0.124, 5.772])
+    answer3 = Decimal('42.565')
+
+    triangle_area = round(vector5.threed_triangle_area(vector6), 3)
+    assert triangle_area == answer3
