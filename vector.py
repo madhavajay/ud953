@@ -14,6 +14,7 @@ class Vector(object):
 
     """Initialise a new Vector with an Array of Coordinates"""
     def __init__(self, coords):
+        self.count = 0
         try:
             if not coords:
                 raise ValueError
@@ -40,6 +41,16 @@ class Vector(object):
 
     def __mul__(self, val):
         return self._operate('*', val)
+
+    def __iter__(self):
+        self.count = 0
+        return self
+
+    def __next__(self):
+        if self.count == self.dimension:
+            raise StopIteration
+        self.count += 1
+        return self.coords[self.count - 1]
 
     # pylint: disable=R0201
     def _eval_(self, x_val, operator, y_val):

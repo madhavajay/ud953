@@ -201,3 +201,10 @@ def test_triangle_area():
     assert area == answer
 
 
+def test_iterable():
+    """Test that Vector coordinates are iterable"""
+    vector1 = Vector([1, 2, 3])
+    array = [1, 2, 3]
+
+    for i, coord in enumerate(vector1):
+        assert coord == array[i]
