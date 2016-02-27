@@ -208,3 +208,21 @@ def test_iterable():
 
     for i, coord in enumerate(vector1):
         assert coord == array[i]
+
+
+def test_index_get():
+    """Test that Vector can be accessed with [] indexing"""
+    vector1 = Vector([1, 2, 3])
+    answer = 3
+
+    assert vector1[2] == answer
+
+
+def test_index_set():
+    """Test that Vector can be set with [] indexing"""
+    vector1 = Vector([1, 2, 2])
+    answer = 3
+
+    assert vector1[2] == 2
+    vector1[2] = 3
+    assert vector1[2] == answer

@@ -6,6 +6,7 @@ https://www.udacity.com/course/linear-algebra-refresher-course--ud953
 """
 from decimal import Decimal, getcontext
 from vector import Vector
+from line import Line
 
 # set the decimal precision
 getcontext().prec = 30
@@ -147,3 +148,23 @@ def test_cross_products():
 
     triangle_area = round(vector5.threed_triangle_area(vector6), 3)
     assert triangle_area == answer3
+
+
+def test_line_functions():
+    """Quiz 7 line functions"""
+    line1 = Line(Vector([4.046, 2.836]), 1.21)
+    line2 = Line(Vector([10.115, 7.09]), 3.025)
+
+    assert line1.line_relationship(line2) == 'lines are coincidental'
+
+    line3 = Line(Vector([7.204, 3.182]), 8.68)
+    line4 = Line(Vector([8.172, 4.114]), 9.883)
+
+    assert line3.line_relationship(line4) == ("lines intersect at "
+                                              "(Decimal('1.173'), "
+                                              "Decimal('0.073'))")
+
+    line5 = Line(Vector([1.182, 5.562]), 6.744)
+    line6 = Line(Vector([1.773, 8.343]), 9.525)
+
+    assert line5.line_relationship(line6) == 'lines intersect at (None, None)'

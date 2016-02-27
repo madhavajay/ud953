@@ -46,6 +46,18 @@ class Vector(object):
         self.count = 0
         return self
 
+    def __getitem__(self, index):
+        return self.coords[index]
+
+    def __setitem__(self, index, value):
+        new_vals = []
+        for i, val in enumerate(self.coords):
+            if i == index:
+                val = value
+            new_vals.append(val)
+
+        self.coords = tuple([Decimal(x) for x in new_vals])
+
     def __next__(self):
         if self.count == self.dimension:
             raise StopIteration
