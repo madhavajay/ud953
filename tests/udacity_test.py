@@ -7,6 +7,7 @@ https://www.udacity.com/course/linear-algebra-refresher-course--ud953
 from decimal import Decimal, getcontext
 from vector import Vector
 from line import Line
+from plane import Plane
 
 # set the decimal precision
 getcontext().prec = 30
@@ -168,3 +169,26 @@ def test_line_functions():
     line6 = Line(Vector([1.773, 8.343]), 9.525)
 
     assert line5.line_relationship(line6) == 'lines intersect at (None, None)'
+
+
+def test_planes_in_3d():
+    """Quiz 8 plane functions"""
+
+    plane1 = Plane(Vector([-0.412, 3.806, 0.728]), -3.46)
+    plane2 = Plane(Vector([1.03, -9.515, -1.82]), 8.65)
+
+    assert plane1.is_parallel(plane2) is True
+    assert plane1.is_coincidence(plane2) is True
+    assert plane1.plane_relationship(plane2) == ('planes are coincidental')
+
+    plane3 = Plane(Vector([2.611, 5.528, 0.283]), 4.6)
+    plane4 = Plane(Vector([7.715, 8.306, 5.342]), 3.76)
+
+    assert plane3.is_parallel(plane4) is False
+    assert plane3.plane_relationship(plane4) == ('planes are not parallel')
+
+    plane5 = Plane(Vector([-7.926, 8.625, -7.212]), -7.952)
+    plane6 = Plane(Vector([-2.642, 2.875, -2.404]), -2.443)
+
+    assert plane5.is_parallel(plane6) is True
+    assert plane5.plane_relationship(plane6) == ('planes are parallel')
