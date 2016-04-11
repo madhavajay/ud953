@@ -192,3 +192,36 @@ def test_planes_in_3d():
 
     assert plane5.is_parallel(plane6) is True
     assert plane5.plane_relationship(plane6) == ('planes are parallel')
+
+
+def test_ge_practice():
+    """Quiz 9 gaussian elimination"""
+    answer_x1 = None
+    answer_y1 = None
+    answer_z1 = None
+    inconsistent1 = True
+
+    assert answer_x1 is None
+    assert answer_y1 is None
+    assert answer_z1 is None
+    assert inconsistent1 is True
+
+    answer_x2 = 4
+    answer_y2 = 3
+    answer_z2 = 1
+    inconsistent2 = False
+
+    assert answer_x2 == 4
+    assert answer_y2 == 3
+    assert answer_z2 == 1
+    assert inconsistent2 is False
+
+    answer_x3 = '3-2y'
+    answer_y3 = 'y'
+    answer_z3 = '-4'
+    inconsistent3 = False
+
+    assert answer_x3 == '3-2y'
+    assert answer_y3 == 'y'
+    assert answer_z3 == '-4'
+    assert inconsistent3 is False
