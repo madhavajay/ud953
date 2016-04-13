@@ -3,6 +3,8 @@
 """This is a mathematical Line Class"""
 
 from decimal import Decimal, getcontext
+from inaccurate_decimal import InaccurateDecimal
+from nonzero import NoNonZeroElements
 
 from vector import Vector
 
@@ -202,16 +204,3 @@ class Line(object):
             if not InaccurateDecimal(item).is_near_zero():
                 return k
         raise NoNonZeroElements(Line.NO_NONZERO_ELTS_FOUND_MSG)
-
-
-class InaccurateDecimal(Decimal):
-    """Utility wrapper class to detect values close to 0"""
-    def is_near_zero(self, eps=1e-10):
-        """Checks if value is virtually 0"""
-        return abs(self) < eps
-
-
-class NoNonZeroElements(Exception):
-    """Custom Error for No None Zero Elements in a Line"""
-    def __init__(self, *args, **kwargs):
-        Exception.__init__(self, *args, **kwargs)
