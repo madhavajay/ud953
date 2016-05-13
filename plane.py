@@ -2,6 +2,7 @@
 # Author: github.com/madhavajay
 """This is a mathematical Plane Class"""
 
+import numbers
 from decimal import Decimal, getcontext
 from inaccurate_decimal import InaccurateDecimal
 from nonzero import NoNonZeroElements
@@ -31,6 +32,11 @@ class Plane(object):
 
         self.set_basepoint()
 
+    def __eq__(self, plane):
+        vector_eq = (self.normal_vector == plane.normal_vector)
+        constant_eq = (self.constant_term == plane.constant_term)
+        return vector_eq and constant_eq
+
     def __getitem__(self, index):
         return self.normal_vector[index]
 
@@ -42,6 +48,31 @@ class Plane(object):
             new_vals.append(val)
 
         self.normal_vector = Vector(tuple([Decimal(x) for x in new_vals]))
+
+    def __add__(self, plane):
+        """Add one Plane with another Plane"""
+        new_vector = self.normal_vector + plane.normal_vector
+        new_constant = self.constant_term + plane.constant_term
+        return Plane(new_vector, new_constant)
+
+    def __sub__(self, plane):
+        """Subtract one Plane from another Plane"""
+        new_vector = self.normal_vector - plane.normal_vector
+        new_constant = self.constant_term - plane.constant_term
+        return Plane(new_vector, new_constant)
+
+    def __mul__(self, val):
+        """Performs Multiplication of Coefficients"""
+        if isinstance(val, (numbers.Integral, numbers.Real, Decimal)):
+            return self._multiply(val)
+        else:
+            raise TypeError('value must be a number')
+
+    def _multiply(self, val):
+        vector = self.normal_vector * val
+        constant_term = self.constant_term * val
+        mul_plane = Plane(vector, constant_term)
+        return mul_plane
 
     def is_parallel(self, plane):
         """Determine if two Planes are parallel"""

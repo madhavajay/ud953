@@ -5,6 +5,17 @@ from vector import Vector
 from plane import Plane
 
 
+def test_add_planes():
+    """Test Adding two Planes"""
+    plane_1 = Plane(Vector([1, 2, 3]), 4)
+    plane_2 = Plane(Vector([-1, 7, 3]), 1)
+    plane_3 = plane_1 + plane_2
+
+    answer = Plane(Vector([0, 9, 6]), 5)
+
+    assert plane_3 == answer
+
+
 def test_plane_set_basepoint():
     """Test Plane Base Point"""
     vector1 = Vector([1, 2, 3])
