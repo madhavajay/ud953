@@ -2,6 +2,7 @@
 # Author: github.com/madhavajay
 """This is a mathematical Linear System Class"""
 
+from copy import deepcopy
 from nonzero import NoNonZeroElements
 from plane import Plane
 
@@ -49,7 +50,6 @@ class LinearSystem(object):
     def get_first_nonzero_indexes(self):
         """Get the indices of the first nonzero term in each row"""
         num_equations = len(self)
-        # num_variables = self.dimension
 
         indices = [-1] * num_equations
 
@@ -84,6 +84,37 @@ class LinearSystem(object):
         ret += '\n'.join(temp)
         return ret
 
-    def compute_rref(self):
-        """Compute the Reduced Row Echelon Form"""
-        pass
+    def compute_triangular_form(self):
+        """Compute Triangular Form"""
+        triangular = deepcopy(self)
+
+        rows = len(triangular.planes)
+        dims = triangular.dimension
+        dim = 0
+        for row in range(0, rows - 1):
+            while dim < dims:
+                coefficient = triangular.planes[row][dim]
+                if coefficient == 0:
+                    # we need to swap it for a row we can use to cancel
+                    swap = False
+                    for next_row in range(row + 1, rows - 1):
+                        if triangular.planes[next_row][dim] > 0:
+                            triangular.swap_rows(row, next_row)
+                            swap = True
+                    if swap is False:
+                        print('swap is {}'.format(swap))
+                        dim = dim + 1
+                else:
+                    # we want to use the current row to clear the other others
+                    for next_row in range(row + 1, rows):
+                        coefficient_remove = triangular.planes[next_row][dim]
+                        # negative and positive are valid, is completed already
+                        if coefficient_remove != 0:
+                            factor = (coefficient_remove / coefficient) * -1
+                            reduction_plane = triangular.planes[row] * factor
+                            triangular.planes[next_row] = (
+                                triangular.planes[next_row] + reduction_plane)
+                    # after doing this we need to move to the next row
+                    break
+
+        return triangular

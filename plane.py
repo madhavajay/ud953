@@ -164,8 +164,7 @@ class Plane(object):
             if not is_initial_term:
                 output += ' '
 
-            if abs(coefficient) != 1:
-                output += '{}'.format(abs(coefficient))
+            output += '{}'.format(abs(coefficient))
 
             return output
 
@@ -176,9 +175,9 @@ class Plane(object):
             terms = ([
                 (write_coefficient(
                     normal_vector[i],
-                    is_initial_term=(i == initial_index)) + 'x_{}'.format(i+1))
+                    is_initial_term=(i == initial_index)
+                ) + 'x_{}'.format(i + 1))
                 for i in range(self.dimension)
-                if round(normal_vector[i], num_decimal_places) != 0
             ])
             output = ' '.join(terms)
 

@@ -8,6 +8,7 @@ from decimal import Decimal, getcontext
 from vector import Vector
 from line import Line
 from plane import Plane
+from linsys import LinearSystem
 
 # set the decimal precision
 getcontext().prec = 30
@@ -225,3 +226,47 @@ def test_ge_practice():
     assert answer_y3 == 'y'
     assert answer_z3 == '-4'
     assert inconsistent3 is False
+
+
+def test_coding_triangular_form():
+    """Quiz 10 coding Triangular Form"""
+
+    plane_1 = Plane(Vector([1, 1, 1]), 1)
+    plane_2 = Plane(Vector([0, 1, 1]), 2)
+    lin_sys = LinearSystem([plane_1, plane_2])
+    triangular = lin_sys.compute_triangular_form()
+
+    assert triangular[0] == plane_1
+    assert triangular[1] == plane_2
+
+    plane_1 = Plane(Vector([1, 1, 1]), 1)
+    plane_2 = Plane(Vector([1, 1, 1]), 2)
+    lin_sys = LinearSystem([plane_1, plane_2])
+    triangular = lin_sys.compute_triangular_form()
+
+    assert triangular[0] == plane_1
+    assert triangular[1] == Plane(constant_term=1)
+
+    plane_1 = Plane(Vector([1, 1, 1]), 1)
+    plane_2 = Plane(Vector([0, 1, 0]), 2)
+    plane_3 = Plane(Vector([1, 1, -1]), 3)
+    plane_4 = Plane(Vector([1, 0, -2]), 2)
+
+    lin_sys = LinearSystem([plane_1, plane_2, plane_3, plane_4])
+    triangular = lin_sys.compute_triangular_form()
+
+    assert triangular[0] == plane_1
+    assert triangular[1] == plane_2
+    assert triangular[2] == Plane(Vector([0, 0, -2]), 2)
+    assert triangular[3] == Plane()
+
+    plane_1 = Plane(Vector([0, 1, 1]), 1)
+    plane_2 = Plane(Vector([1, -1, 1]), 2)
+    plane_3 = Plane(Vector([1, 2, -5]), 3)
+
+    lin_sys = LinearSystem([plane_1, plane_2, plane_3])
+    triangular = lin_sys.compute_triangular_form()
+
+    assert triangular[0] == Plane(Vector([1, -1, 1]), 2)
+    assert triangular[1] == Plane(Vector([0, 1, 1]), 1)
+    assert triangular[2] == Plane(Vector([0, 0, -9]), -2)
