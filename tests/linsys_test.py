@@ -2,10 +2,14 @@
 # Author: github.com/madhavajay
 """This is a test for the Linear System Class"""
 
+from decimal import Decimal, getcontext
 from vector import Vector
 from line import Line
 from plane import Plane
 from linsys import LinearSystem
+
+# set the decimal precision
+getcontext().prec = 30
 
 
 def test_linsys_basepoint():
@@ -145,3 +149,47 @@ def test_triangular_form():
     assert triangular[0] == Plane(Vector([1, -1, 1]), 2)
     assert triangular[1] == Plane(Vector([0, 1, 1]), 1)
     assert triangular[2] == Plane(Vector([0, 0, -9]), -2)
+
+
+def test_rref_form():
+    """Test for RREF Reduced Row Echelon Form"""
+
+    plane_1 = Plane(Vector([1, 1, 1]), 1)
+    plane_2 = Plane(Vector([0, 1, 1]), 2)
+    lin_sys = LinearSystem([plane_1, plane_2])
+    rref = lin_sys.compute_rref_form()
+
+    assert rref[0] == Plane(Vector([1, 0, 0]), -1)
+    assert rref[1] == plane_2
+
+    plane_1 = Plane(Vector([1, 1, 1]), 1)
+    plane_2 = Plane(Vector([1, 1, 1]), 2)
+    lin_sys = LinearSystem([plane_1, plane_2])
+    rref = lin_sys.compute_rref_form()
+
+    assert rref[0] == plane_1
+    assert rref[1] == Plane(constant_term=1)
+
+    plane_1 = Plane(Vector([1, 1, 1]), 1)
+    plane_2 = Plane(Vector([0, 1, 0]), 2)
+    plane_3 = Plane(Vector([1, 1, -1]), 3)
+    plane_4 = Plane(Vector([1, 0, -2]), 2)
+
+    lin_sys = LinearSystem([plane_1, plane_2, plane_3, plane_4])
+    rref = lin_sys.compute_rref_form()
+
+    assert rref[0] == Plane(Vector([1, 0, 0]), 0)
+    assert rref[1] == plane_2
+    assert rref[2] == Plane(Vector([0, 0, -2]), 2)
+    assert rref[3] == Plane()
+
+    plane_1 = Plane(Vector([0, 1, 1]), 1)
+    plane_2 = Plane(Vector([1, -1, 1]), 2)
+    plane_3 = Plane(Vector([1, 2, -5]), 3)
+
+    lin_sys = LinearSystem([plane_1, plane_2, plane_3])
+    rref = lin_sys.compute_rref_form()
+
+    assert rref[0] == Plane(Vector([1, 0, 0]), Decimal(23) / Decimal(9))
+    assert rref[1] == Plane(Vector([0, 1, 0]), Decimal(7) / Decimal(9))
+    assert rref[2] == Plane(Vector([0, 0, 1]), Decimal(2) / Decimal(9))

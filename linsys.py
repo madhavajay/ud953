@@ -102,7 +102,6 @@ class LinearSystem(object):
                             triangular.swap_rows(row, next_row)
                             swap = True
                     if swap is False:
-                        print('swap is {}'.format(swap))
                         dim = dim + 1
                 else:
                     # we want to use the current row to clear the other others
@@ -118,3 +117,59 @@ class LinearSystem(object):
                     break
 
         return triangular
+
+    def compute_rref_form(self):
+        """Compute RREF Reduced Row Echelon Form"""
+        # start at the bottom right, divide by coeffecient to = 1 z term
+        # subtract multiple of z term from next one up to clear the z, then
+        # divide by the co-efficient
+        # finally subtract multiple of z term, then multiple of y term
+        # then normalize the coefficient to postive 1
+
+        rref = deepcopy(self.compute_triangular_form())
+        rows = len(rref.planes)
+        dims = rref.dimension - 1
+        dim = dims
+
+        for row in range(rows - 1, -1, -1):
+            while dim > -1:
+                coefficient = rref.planes[row][dim]
+                if coefficient != 0:
+                    # go through below coefficients using them to cancel self
+                    for range_index in range(row, rows - 1):
+                        under_row = range_index + 1
+
+                        # try getting it for cancelling
+                        under_coeff = round(rref.planes[under_row][dim], 3)
+                        if under_coeff != 0:
+                            # use it to cancel the current one
+                            # remove the coefficients amount of singular from
+                            # the plane below
+
+                            # subtract ratio of below plane to cancel it out
+                            positive = coefficient < 0
+                            sub_factor = abs(coefficient) / under_coeff
+
+                            reduction_plane = (
+                                rref.planes[under_row] * sub_factor)
+
+                            rref.planes[row] = (
+                                rref.planes[row] + reduction_plane if positive
+                                else rref.planes[row] - reduction_plane)
+
+                # were done with this coefficient so jump to the next dimension
+                dim = dim - 1
+            # new row so reset the dimension index
+            dim = dims
+
+        # finally normalise the coefficients so they are 1 and positive
+        rows = len(rref.planes)
+        for row in range(rows - 1, -1, -1):
+            while dim > -1:
+                coefficient = rref.planes[row][dim]
+                if coefficient != 0:
+                    # then divide by self to get 1 coefficient
+                    sub_factor = 1 / coefficient
+                    rref.planes[row] = rref.planes[row] * sub_factor
+                dim = dim - 1
+        return rref

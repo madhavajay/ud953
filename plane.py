@@ -33,7 +33,10 @@ class Plane(object):
         self.set_basepoint()
 
     def __eq__(self, plane):
-        vector_eq = (self.normal_vector == plane.normal_vector)
+        vector_1_rounded = self.normal_vector.round_coords(3)
+        vector_2_rounded = plane.normal_vector.round_coords(3)
+        vector_eq = vector_1_rounded == vector_2_rounded
+
         constant_eq = (self.constant_term == plane.constant_term)
         return vector_eq and constant_eq
 
@@ -151,6 +154,7 @@ class Plane(object):
         def write_coefficient(coefficient, is_initial_term=False):
             """Print the coefficient as a readable string Ax + By + Cz = K"""
             coefficient = round(coefficient, num_decimal_places)
+
             if coefficient % 1 == 0:
                 coefficient = int(coefficient)
 
@@ -188,6 +192,7 @@ class Plane(object):
                 raise error
 
         constant = round(self.constant_term, num_decimal_places)
+
         if constant % 1 == 0:
             constant = int(constant)
         output += ' = {}'.format(constant)

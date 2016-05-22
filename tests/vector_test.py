@@ -226,3 +226,11 @@ def test_index_set():
     assert vector1[2] == 2
     vector1[2] = 3
     assert vector1[2] == answer
+
+
+def test_negative_zero_get():
+    """Test that negative zero in a Vector is equal to zero"""
+    vector1 = Vector([0, 0, 0])
+    vector2 = Vector([-0, 0, 0])
+
+    assert vector1 == vector2
