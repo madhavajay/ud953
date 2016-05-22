@@ -161,7 +161,7 @@ class Vector(object):
         """Determine if two Vectors are orthogonal (right angles)"""
         if self.magnitude() == 0 or vector.magnitude() == 0:
             return True
-        return self.angle_degrees(vector) == Decimal('90')
+        return round(self.angle_degrees(vector), 3) == Decimal('90')
 
     def project_to(self, vector):
         """
