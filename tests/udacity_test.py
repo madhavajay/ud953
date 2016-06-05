@@ -270,3 +270,76 @@ def test_coding_triangular_form():
     assert triangular[0] == Plane(Vector([1, -1, 1]), 2)
     assert triangular[1] == Plane(Vector([0, 1, 1]), 1)
     assert triangular[2] == Plane(Vector([0, 0, -9]), -2)
+
+
+def test_rref_form():
+    """Quiz 11 RREF Reduced Row Echelon Form"""
+
+    plane_1 = Plane(Vector([1, 1, 1]), 1)
+    plane_2 = Plane(Vector([0, 1, 1]), 2)
+    lin_sys = LinearSystem([plane_1, plane_2])
+    rref = lin_sys.compute_rref_form()
+
+    assert rref[0] == Plane(Vector([1, 0, 0]), -1)
+    assert rref[1] == plane_2
+
+    plane_1 = Plane(Vector([1, 1, 1]), 1)
+    plane_2 = Plane(Vector([1, 1, 1]), 2)
+    lin_sys = LinearSystem([plane_1, plane_2])
+    rref = lin_sys.compute_rref_form()
+
+    assert rref[0] == plane_1
+    assert rref[1] == Plane(constant_term=1)
+
+    plane_1 = Plane(Vector([1, 1, 1]), 1)
+    plane_2 = Plane(Vector([0, 1, 0]), 2)
+    plane_3 = Plane(Vector([1, 1, -1]), 3)
+    plane_4 = Plane(Vector([1, 0, -2]), 2)
+
+    lin_sys = LinearSystem([plane_1, plane_2, plane_3, plane_4])
+    rref = lin_sys.compute_rref_form()
+
+    assert rref[0] == Plane(Vector([1, 0, 0]), 0)
+    assert rref[1] == plane_2
+    # assert rref[2] == Plane(Vector([0, 0, -2]), 2)
+    # should be
+    assert rref[2] == Plane(Vector([0, 0, 1]), -1)
+    assert rref[3] == Plane()
+
+    plane_1 = Plane(Vector([0, 1, 1]), 1)
+    plane_2 = Plane(Vector([1, -1, 1]), 2)
+    plane_3 = Plane(Vector([1, 2, -5]), 3)
+
+    lin_sys = LinearSystem([plane_1, plane_2, plane_3])
+    rref = lin_sys.compute_rref_form()
+
+    assert rref[0] == Plane(Vector([1, 0, 0]), Decimal(23) / Decimal(9))
+    assert rref[1] == Plane(Vector([0, 1, 0]), Decimal(7) / Decimal(9))
+    assert rref[2] == Plane(Vector([0, 0, 1]), Decimal(2) / Decimal(9))
+
+
+def test_ge_solution():
+    """Quiz 12 Coding Gaussian Elimination"""
+    plane_1 = Plane(Vector([5.862, 1.178, -10.366]), -8.15)
+    plane_2 = Plane(Vector([-2.931, -0.589, 5.183]), -4.075)
+
+    lin_sys_1 = LinearSystem([plane_1, plane_2])
+    solutions_1 = lin_sys_1.system_solutions()
+    assert solutions_1 == 'system has no consistent solutions'
+
+    plane_3 = Plane(Vector([8.631, 5.112, -1.816]), 5.113)
+    plane_4 = Plane(Vector([4.315, 11.132, 5.27]), 6.775)
+    plane_5 = Plane(Vector([-2.158, 3.01, -1.727]), -0.831)
+
+    lin_sys_2 = LinearSystem([plane_3, plane_4, plane_5])
+    solutions_2 = lin_sys_2.system_solutions()
+    assert solutions_2 == 'system has infinite solutions'
+
+    plane_6 = Plane(Vector([5.262, 2.739, -9.878]), -3.441)
+    plane_7 = Plane(Vector([5.111, 6.358, 7.638]), -2.152)
+    plane_8 = Plane(Vector([2.016, -9.924, -1.367]), -9.278)
+    plane_9 = Plane(Vector([2.167, -13.543, -18.883]), -10.567)
+
+    lin_sys_3 = LinearSystem([plane_6, plane_7, plane_8, plane_9])
+    solutions_3 = lin_sys_3.system_solutions()
+    assert solutions_3 == 'solution is: a = -1.177, b = 0.707, c = -0.083'

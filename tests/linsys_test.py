@@ -154,35 +154,6 @@ def test_triangular_form():
 def test_rref_form():
     """Test for RREF Reduced Row Echelon Form"""
 
-    plane_1 = Plane(Vector([1, 1, 1]), 1)
-    plane_2 = Plane(Vector([0, 1, 1]), 2)
-    lin_sys = LinearSystem([plane_1, plane_2])
-    rref = lin_sys.compute_rref_form()
-
-    assert rref[0] == Plane(Vector([1, 0, 0]), -1)
-    assert rref[1] == plane_2
-
-    plane_1 = Plane(Vector([1, 1, 1]), 1)
-    plane_2 = Plane(Vector([1, 1, 1]), 2)
-    lin_sys = LinearSystem([plane_1, plane_2])
-    rref = lin_sys.compute_rref_form()
-
-    assert rref[0] == plane_1
-    assert rref[1] == Plane(constant_term=1)
-
-    plane_1 = Plane(Vector([1, 1, 1]), 1)
-    plane_2 = Plane(Vector([0, 1, 0]), 2)
-    plane_3 = Plane(Vector([1, 1, -1]), 3)
-    plane_4 = Plane(Vector([1, 0, -2]), 2)
-
-    lin_sys = LinearSystem([plane_1, plane_2, plane_3, plane_4])
-    rref = lin_sys.compute_rref_form()
-
-    assert rref[0] == Plane(Vector([1, 0, 0]), 0)
-    assert rref[1] == plane_2
-    assert rref[2] == Plane(Vector([0, 0, -2]), 2)
-    assert rref[3] == Plane()
-
     plane_1 = Plane(Vector([0, 1, 1]), 1)
     plane_2 = Plane(Vector([1, -1, 1]), 2)
     plane_3 = Plane(Vector([1, 2, -5]), 3)
@@ -193,3 +164,38 @@ def test_rref_form():
     assert rref[0] == Plane(Vector([1, 0, 0]), Decimal(23) / Decimal(9))
     assert rref[1] == Plane(Vector([0, 1, 0]), Decimal(7) / Decimal(9))
     assert rref[2] == Plane(Vector([0, 0, 1]), Decimal(2) / Decimal(9))
+
+
+def test_no_consistent_solutions():
+    """Test the system has no solutions"""
+
+    plane_1 = Plane(Vector([1, 1, -1]), 2)
+    plane_2 = Plane(Vector([2, 3, -1]), 0)
+    plane_3 = Plane(Vector([3, 4, -2]), 1)
+
+    lin_sys_1 = LinearSystem([plane_1, plane_2, plane_3])
+    solutions_1 = lin_sys_1.system_solutions()
+    assert solutions_1 == 'system has no consistent solutions'
+
+
+def test_infinite_solutions():
+    """Test the system has infinite solutions"""
+    plane_4 = Plane(Vector([1, 1, 1]), 3)
+    plane_5 = Plane(Vector([2, 4, 1]), 8)
+    plane_6 = Plane(Vector([6, 10, 4]), 22)
+
+    lin_sys_2 = LinearSystem([plane_4, plane_5, plane_6])
+    solutions_2 = lin_sys_2.system_solutions()
+    assert solutions_2 == 'system has infinite solutions'
+
+
+def test_single_solution():
+    """Test the system has a single solution"""
+    plane_7 = Plane(Vector([1, 1, 1]), 1)
+    plane_8 = Plane(Vector([0, 1, 0]), 2)
+    plane_9 = Plane(Vector([1, 1, -1]), 3)
+    plane_10 = Plane(Vector([1, 0, -2]), 2)
+
+    lin_sys_3 = LinearSystem([plane_7, plane_8, plane_9, plane_10])
+    solutions_3 = lin_sys_3.system_solutions()
+    assert solutions_3 == 'solution is: a = 0.000, b = 2.000, c = -1.000'

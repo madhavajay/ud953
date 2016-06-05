@@ -3,6 +3,8 @@
 """This is a mathematical Linear System Class"""
 
 from copy import deepcopy
+from decimal import Decimal
+
 from nonzero import NoNonZeroElements
 from plane import Plane
 
@@ -118,58 +120,98 @@ class LinearSystem(object):
 
         return triangular
 
+    def clear_coefficients_up(self, row, dim):
+        """Go up from the row and clear above rows with the current row"""
+        for next_row in range(row)[::-1]:
+            plane = self.planes[next_row]
+            sub_factor = -plane[dim]
+            self.add_multiple_times_row_to_row(sub_factor, row, next_row)
+
+    def scale_coefficient_to_one(self, row, dim):
+        """Scale the row to a 1 so that it can be used to clear above"""
+        plane = self.planes[row]
+        coefficient = plane[dim]
+        sub_factor = Decimal(1) / Decimal(coefficient)
+        self.planes[row] = plane * sub_factor
+
+    def print_solution(self):
+        """Print out the equation in the form of A = K1, B = K2 etc"""
+        solutions = []
+        term = ord('a')
+
+        pivots = self.get_first_nonzero_indexes()
+        for row, dim in enumerate(pivots):
+            if dim > -1:
+                plane = self.planes[row]
+                solutions.append('{} = {}'.format(
+                    chr(term), round(plane.constant_term, 3)))
+                term = term + 1
+        return ', '.join(solutions)
+
+    def system_solutions(self):
+        """
+        Return the solutions of the System
+        # if there is 0 = k there are no solutions
+        # if there are less planes than dimensions there are infinite solutions
+        # if there are more than 1 pivot variable there are infinite solutions
+        # otherwise there is a single solution
+        """
+
+        rref = self.compute_rref_form()
+
+        dims = rref.dimension
+        rows = len(rref.planes)
+        if rows < dims:
+            return 'system has no consistent solutions'
+
+        row = 0
+        empty_rows = 0
+        is_inconsistent = False
+        could_be_infinite = False
+
+        for row in range(0, rows):
+            # check how many pivot variables
+            plane = rref.planes[row]
+            unique_values = set(plane.normal_vector.round_coords(3))
+            non_zero_values = unique_values.difference([0])
+
+            if len(non_zero_values) > 1:
+                could_be_infinite = True
+            row_total = 0
+            for dim in range(0, dims):
+                row_total = row_total + plane[dim]
+            row_total = round(row_total, 3)
+            constant_term = round(plane.constant_term, 3)
+
+            # if the coefficients are 0
+            if row_total == 0:
+                # if the constant term is also 0
+                if constant_term == 0:
+                    empty_rows = empty_rows + 1
+                else:
+                    # the system is inconsistent
+                    is_inconsistent = True
+                    break
+        if is_inconsistent:
+            return 'system has no consistent solutions'
+        elif could_be_infinite or rows - empty_rows < dims:
+            return 'system has infinite solutions'
+        else:
+            return 'solution is: {}'.format(rref.print_solution())
+
     def compute_rref_form(self):
         """Compute RREF Reduced Row Echelon Form"""
-        # start at the bottom right, divide by coeffecient to = 1 z term
-        # subtract multiple of z term from next one up to clear the z, then
-        # divide by the co-efficient
-        # finally subtract multiple of z term, then multiple of y term
-        # then normalize the coefficient to postive 1
+        triangular = self.compute_triangular_form()
+        rows = len(triangular)
+        pivots = triangular.get_first_nonzero_indexes()
 
-        rref = deepcopy(self.compute_triangular_form())
-        rows = len(rref.planes)
-        dims = rref.dimension - 1
-        dim = dims
+        for row in range(rows)[::-1]:
+            dim = pivots[row]
+            if dim < 0:
+                continue
+            coefficient = triangular.planes[row][dim]
+            if coefficient != 0:
+                triangular.scale_coefficient_to_one(row, dim)
+                triangular.clear_coefficients_up(row, dim)
 
-        for row in range(rows - 1, -1, -1):
-            while dim > -1:
-                coefficient = rref.planes[row][dim]
-                if coefficient != 0:
-                    # go through below coefficients using them to cancel self
-                    for range_index in range(row, rows - 1):
-                        under_row = range_index + 1
-
-                        # try getting it for cancelling
-                        under_coeff = round(rref.planes[under_row][dim], 3)
-                        if under_coeff != 0:
-                            # use it to cancel the current one
-                            # remove the coefficients amount of singular from
-                            # the plane below
-
-                            # subtract ratio of below plane to cancel it out
-                            positive = coefficient < 0
-                            sub_factor = abs(coefficient) / under_coeff
-
-                            reduction_plane = (
-                                rref.planes[under_row] * sub_factor)
-
-                            rref.planes[row] = (
-                                rref.planes[row] + reduction_plane if positive
-                                else rref.planes[row] - reduction_plane)
-
-                # were done with this coefficient so jump to the next dimension
-                dim = dim - 1
-            # new row so reset the dimension index
-            dim = dims
-
-        # finally normalise the coefficients so they are 1 and positive
-        rows = len(rref.planes)
-        for row in range(rows - 1, -1, -1):
-            while dim > -1:
-                coefficient = rref.planes[row][dim]
-                if coefficient != 0:
-                    # then divide by self to get 1 coefficient
-                    sub_factor = 1 / coefficient
-                    rref.planes[row] = rref.planes[row] * sub_factor
-                dim = dim - 1
-        return rref
+        return triangular
