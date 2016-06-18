@@ -6,6 +6,6 @@ install:
   - pip install -r requirements.txt
 script:
   # Normal tests
-  - py.test
+  - py.test --cov
 after_success:
   - bash <(curl -s https://codecov.io/bash)
